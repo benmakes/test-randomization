@@ -1,5 +1,5 @@
 """
-A file to change a .docx file with one table to have its cell's digits replaced with random digits
+A file to change a .docx file's tables to have its cell's digits replaced with random digits (no leading zeros, no zeros)
 Author: Benjamin Martin
 Date: 2022-08-28
 """
@@ -14,7 +14,7 @@ import os
 
 def repl_fun(match):
     #random.randint has inclusive boundaries
-    return str(random.randint(0,9))
+    return str(random.randint(0, 9))
 
 
 def randomize_table_digits(table, row_lower_bound, row_upper_bound, col_lower_bound, col_upper_bound, repl_fun,
@@ -131,6 +131,7 @@ def add_table_answers(table, row_lower_bound, row_upper_bound, col_lower_bound, 
 if __name__ == "__main__":
     now = datetime.now().strftime("%m_%d_%Y %H_%M_%S")
     input_file = 'Paragraph Test.docx'
+    randomize_test_flag = True
     initialization_flag = True
     make_answer_key_flag = True
     initialization_str = ')'
@@ -145,20 +146,26 @@ if __name__ == "__main__":
         print('Making randomized_docx_tables folder: ', output_test_path)
         os.makedirs(output_test_path)
 
-    output_test_file_path = os.path.join(output_test_path, now + ' ' + input_file)
-    test_doc = docx.Document(input_file)
+    if randomize_test_flag:
+        output_test_file_path = os.path.join(output_test_path, now + ' ' + input_file)
+        test_doc = docx.Document(input_file)
 
-    for i, table in enumerate(test_doc.tables):
-        test_doc.tables[i] = randomize_table_digits(table, randomized_row_lower_bound, randomized_row_upper_bound,
-                                                randomized_col_lower_bound, randomized_col_upper_bound, repl_fun,
-                                                initialization_flag=initialization_flag, initialization_str=initialization_str)
+        for i, table in enumerate(test_doc.tables):
+            test_doc.tables[i] = randomize_table_digits(table, randomized_row_lower_bound, randomized_row_upper_bound,
+                                                    randomized_col_lower_bound, randomized_col_upper_bound, repl_fun,
+                                                    initialization_flag=initialization_flag, initialization_str=initialization_str)
 
-    test_doc.save(output_test_file_path)
-    print('Outputted randomized test to file: ', output_test_file_path)
+        test_doc.save(output_test_file_path)
+        print('Outputted randomized test to file: ', output_test_file_path)
 
     if make_answer_key_flag:
         output_answer_key_file_path = os.path.join(output_test_path, now + ' ANSWER KEY ' + input_file)
-        answer_key_doc = docx.Document(output_test_file_path)
+
+        if not randomize_test_flag:
+            answer_key_doc = docx.Document(output_test_file_path)
+
+        else:
+            answer_key_doc = docx.Document(input_file)
 
         for i, table in enumerate(answer_key_doc.tables):
             answer_key_doc.tables[i] = add_table_answers(table, randomized_row_lower_bound, randomized_row_upper_bound,
