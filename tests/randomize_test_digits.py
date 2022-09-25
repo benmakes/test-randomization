@@ -117,7 +117,7 @@ def add_table_answers(table, row_lower_bound, row_upper_bound, col_lower_bound, 
                     answer_str += str(answer)
 
                 else:
-                    answer_str += format(answer, '.2f')
+                    answer_str += format(answer, '.4f')
 
             except:
                 answer_str = ' not evaluable'
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     if make_answer_key_flag:
         output_answer_key_file_path = os.path.join(output_test_path, now + ' ANSWER KEY ' + input_file)
 
-        if not randomize_test_flag:
+        if randomize_test_flag:
             answer_key_doc = docx.Document(output_test_file_path)
 
         else:
